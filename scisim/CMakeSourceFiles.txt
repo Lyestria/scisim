@@ -14,6 +14,7 @@ set( Sources
   ConstrainedMaps/ImpactMaps/MinMapImpact.cpp
   ConstrainedMaps/ImpactMaps/LCPOperatorAPGD.cpp
   ConstrainedMaps/ImpactMaps/NonNegativeProjection.cpp
+  ConstrainedMaps/ImpactMaps/LCPOperatorPI.cpp
   ConstrainedMaps/FrictionMaps/FrictionOperator.cpp
   ConstrainedMaps/FrictionMaps/FrictionOperatorUtilities.cpp
   ConstrainedMaps/FrictionMaps/FischerBurmeisterBoundConstrained.cpp
@@ -73,6 +74,7 @@ set( Headers
   ConstrainedMaps/ImpactMaps/MinMapImpact.h
   ConstrainedMaps/ImpactMaps/LCPOperatorAPGD.h
   ConstrainedMaps/ImpactMaps/NonNegativeProjection.h
+  ConstrainedMaps/ImpactMaps/LCPOperatorPI.h
   ConstrainedMaps/FrictionMaps/FrictionOperator.h
   ConstrainedMaps/FrictionMaps/FrictionOperatorUtilities.h
   ConstrainedMaps/FrictionMaps/FischerBurmeisterBoundConstrained.h
