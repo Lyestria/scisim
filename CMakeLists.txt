@@ -84,6 +84,10 @@ endif()
 # Create a default location for custom CMake modules
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake )
 
+set( CMAKE_PREFIX_PATH /usr/local/install/ipopt )
+
+set( CMAKE_Fortran_COMPILER gfortran )
+
 # Allow projects to reference source relative to the root of the project
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
@@ -95,13 +99,13 @@ option( STRICT_BUILD "Enable aggressive warnings and treat warnings as errors" O
 
 option( ENABLE_IWYU "Enables builds with 'include-what-you-use' (http://include-what-you-use.org/)" )
 
-option( USE_QT4 "Build Qt4 front ends" OFF )
+option( USE_QT4 "Build Qt4 front ends" ON )
 
-option( USE_IPOPT "Use the Ipopt solver (Fortran required)" OFF )
+option( USE_IPOPT "Use the Ipopt solver (Fortran required)" ON )
 
 option( USE_OPENMP "OpenMP-based parallelism" OFF )
 
-option( USE_HDF5 "Serialization support with HDF5" OFF )
+option( USE_HDF5 "Serialization support with HDF5" ON )
 
 option( USE_PYTHON "Embedded Python language scripting" OFF )
 

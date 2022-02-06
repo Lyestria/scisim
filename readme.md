@@ -123,7 +123,7 @@ Options of note include:
 
 To enable the build system to find Ipopt, prefix the cmake command with CMAKE_PREFIX_PATH set to your Ipopt [installation directory](https://github.com/breannansmith/scisim/blob/master/readme_ipopt.md):
 
-    CMAKE_PREFIX_PATH=/path/to/ipopt/install CC=gcc CXX=g++ FC=gfortran cmake -DUSE_IPOPT=ON ..
+    CMAKE_PREFIX_PATH=/usr/local/install/ipopt FC=gfortran cmake -DUSE_IPOPT=ON -DUSE_QT4=ON -DUSE_HDF5=ON ..
 
 Platform Specific Issues
 ------------------------

@@ -65,7 +65,7 @@ Some example configurations for Ipopt include
 
 * The GCC compiler toolchain and MKL BLAS
 
-        ../configure CXX=g++ CC=gcc F77=gfortran ADD_CFLAGS=-fopenmp ADD_FFLAGS=-fopenmp ADD_CXXFLAGS=-fopenmp --with-blas="-L$MKLROOT/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lm" --prefix=$IPOPT_DIR
+        ../configure CXX=g++ CC=gcc F77=gfortran ADD_CFLAGS=-fopenmp ADD_FFLAGS=-fopenmp ADD_CXXFLAGS=-fopenmp --with-blas="-L/usr/lib/x86_64-linux-gnu -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lm" --prefix=$IPOPT_DIR
 
 * To build with debug support, add the following to any of the above commands
 
