@@ -11,7 +11,7 @@ class LCPOperatorPI final : public ImpactOperator {
 
 public:
 
-    explicit LCPOperatorPI(const scalar& tol);
+    explicit LCPOperatorPI( const scalar& tol, const unsigned& max_iters );
     explicit LCPOperatorPI( std::istream& input_stream );
 
     virtual ~LCPOperatorPI() override = default;
@@ -26,6 +26,7 @@ public:
 
 private:
     const scalar m_tol;
+    const unsigned max_iters;
 };
 
 
