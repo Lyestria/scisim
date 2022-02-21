@@ -16,6 +16,7 @@
 #include "scisim/ConstrainedMaps/ImpactMaps/JacobiOperator.h"
 #include "scisim/ConstrainedMaps/ImpactMaps/GROperator.h"
 #include "scisim/ConstrainedMaps/ImpactMaps/GRROperator.h"
+#include "scisim/ConstrainedMaps/ImpactMaps/LCPOperatorPI.h"
 #include "scisim/ConstrainedMaps/GeometricImpactFrictionMap.h"
 #include "scisim/ConstrainedMaps/StabilizedImpactFrictionMap.h"
 #include "scisim/ConstrainedMaps/SymplecticEulerImpactFrictionMap.h"
@@ -1208,6 +1209,39 @@ static bool loadUnconstrainedMap( const rapidxml::xml_node<>& node, std::unique_
   return true;
 }
 
+// TODO: Refactor remaining operators to use loadTolerance and loadMaxIters
+static bool loadTolerance( const rapidxml::xml_node<>& node, const std::string& solver_name, scalar& tol )
+{
+  const rapidxml::xml_attribute<>* const tol_nd{ node.first_attribute( "tol" ) };
+  if( tol_nd == nullptr )
+  {
+    std::cerr << "Could not locate tol for " << solver_name << " solver" << std::endl;
+    return false;
+  }
+  if( !StringUtilities::extractFromString( std::string{ tol_nd->value() }, tol ) || tol <= 0.0 )
+  {
+    std::cerr << "Could not load tol for " << solver_name << " solver, value must be a positive scalar" << std::endl;
+    return false;
+  }
+  return true;
+}
+
+static bool loadMaxIters( const rapidxml::xml_node<>& node, const std::string& solver_name, unsigned& max_iters)
+{
+  const rapidxml::xml_attribute<>* const itr_nd{ node.first_attribute( "max_iters" ) };
+  if( itr_nd == nullptr )
+  {
+    std::cerr << "Could not locate max_iters for " << solver_name << " solver" << std::endl;
+    return false;
+  }
+  if( !StringUtilities::extractFromString( std::string{ itr_nd->value() }, max_iters ) )
+  {
+    std::cerr << "Could not load max_iters for " << solver_name << " solver, value must be an unsigned integer" << std::endl;
+    return false;
+  }
+  return true;
+}
+
 static bool loadLCPSolver( const rapidxml::xml_node<>& node, std::unique_ptr<ImpactOperator>& impact_operator )
 {
   const rapidxml::xml_attribute<>* const nd{ node.first_attribute( "name" ) };
@@ -1219,8 +1253,16 @@ static bool loadLCPSolver( const rapidxml::xml_node<>& node, std::unique_ptr<Imp
 
   const std::string solver_name{ nd->value() };
 
+  if( solver_name == "policy_iteration" )
+  {
+    scalar tol;
+    unsigned max_iters;
+    if (!loadTolerance(node, solver_name, tol)) return false;
+    if (!loadMaxIters(node, solver_name, max_iters)) return false;
+    impact_operator.reset(new LCPOperatorPI {tol, max_iters});
+  }
   #ifdef QL_FOUND
-  if( solver_name == "ql_vp" )
+  else if( solver_name == "ql_vp" )
   {
     // Attempt to parse the solver tolerance
     const rapidxml::xml_attribute<>* const tol_nd{ node.first_attribute( "tol" ) };
@@ -1254,10 +1296,9 @@ static bool loadLCPSolver( const rapidxml::xml_node<>& node, std::unique_ptr<Imp
     }
     impact_operator.reset( new LCPOperatorQL{ tol } );
   }
-  else
   #endif
   #ifdef IPOPT_FOUND
-  if( solver_name == "ipopt" )
+  else if( solver_name == "ipopt" )
   {
     // Attempt to read the desired linear solvers
     std::vector<std::string> linear_solvers;
@@ -1307,19 +1348,12 @@ static bool loadLCPSolver( const rapidxml::xml_node<>& node, std::unique_ptr<Imp
     }
     impact_operator.reset( new LCPOperatorIpopt{ linear_solvers, con_tol } );
   }
-  else
   #endif
-  #if defined(QL_FOUND) || defined(IPOPT_FOUND)
-  {
+  else {
     std::cerr << "Invalid lcp solver name: " << solver_name << std::endl;
     return false;
   }
-
   return true;
-  #else
-  std::cerr << "Invalid lcp solver name: " << solver_name << std::endl;
-  return false;
-  #endif
 }
 
 // TODO: Clean this function up, pull into SCISim
