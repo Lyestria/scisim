@@ -7,12 +7,15 @@
 
 #include <iostream>
 
+#include <chrono>
+
 #include "scisim/StringUtilities.h"
 #include "scisim/Utilities.h"
 #include "scisim/ConstrainedMaps/IpoptUtilities.h"
 
 #ifndef NDEBUG
 #include <typeinfo>
+
 #endif
 #include "IpIpoptCalculatedQuantities.hpp"
 #include "IpIpoptData.hpp"
@@ -95,6 +98,9 @@ void LCPOperatorIpopt::flow( const std::vector<std::unique_ptr<Constraint>>& con
 
   // Create the Ipopt-based QP solver
   assert( Q.rows() == Q.cols() );
+  std::cout << "LCPOperatorPI: Solving LCP of size " << N.cols() << std::endl;
+  // Get initial time
+  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
   // Use built in termination, for now
   Ipopt::SmartPtr<Ipopt::TNLP> ipopt_problem = new QPNLP{ Q, false, FischerBurmeisterImpact{ m_tol } };
   QPNLP& qp_nlp{ *static_cast<QPNLP*>( GetRawPtr( ipopt_problem ) ) };
@@ -138,6 +144,8 @@ void LCPOperatorIpopt::flow( const std::vector<std::unique_ptr<Constraint>>& con
       break;
     }
   }
+  std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
+  std::cout << "LCPOperatorIpopt: Solved LCP in " << elapsed_seconds.count() << " seconds." << std::endl;
 }
 
 void LCPOperatorIpopt::solveQP( const QPTerminationOperator& termination_operator, const SparseMatrixsc& Minv, const SparseMatrixsc& N, const VectorXs& b, VectorXs& alpha, scalar& achieved_tol ) const

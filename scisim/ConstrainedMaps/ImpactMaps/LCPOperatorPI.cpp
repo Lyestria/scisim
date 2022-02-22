@@ -5,6 +5,7 @@
 #include <iostream>
 #include "LCPOperatorPI.h"
 #include "scisim/Utilities.h"
+#include <chrono>
 
 LCPOperatorPI::LCPOperatorPI(const scalar &tol, const unsigned &max_iters)
 : m_tol (tol), max_iters (max_iters)
@@ -45,10 +46,20 @@ void updateValue(const SparseMatrixsc &policy, const SparseMatrixsc &Q, const Ve
   x = cg.solve(-policy * b);
 }
 
+void reportTime(const std::chrono::time_point<std::chrono::system_clock> &start)
+{
+  std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
+  std::cout << "LCPOperatorPI: Time elapsed: " << elapsed_seconds.count() << "s\n";
+}
+
 void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, const SparseMatrixsc &M,
                          const SparseMatrixsc &Minv, const VectorXs &q0, const VectorXs &v0, const VectorXs &v0F,
                          const SparseMatrixsc &N, const SparseMatrixsc &Q, const VectorXs &nrel, const VectorXs &CoR,
                          VectorXs &alpha) {
+  std::cout << "LCPOperatorPI: Solving LCP of size " << N.cols() << std::endl;
+  // Get initial time
+  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+
   VectorXs b { N.transpose() * (1 + CoR(0)) * v0 };
   // Solve complementarity with x and Qx + b
   VectorXs x { b.size() }; // Initial guess of 0 (maybe change later)
@@ -59,14 +70,19 @@ void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, c
     error = getPolicy(Q, x, b, policy);
     if (error <= m_tol) {
       alpha = x;
+      std::cout << "LCPOperatorPI: Converged in " << n_iter << " iterations." << std::endl;
+      reportTime(start);
       return;
     }
     if (n_iter == max_iters)
       break;
     updateValue(policy, Q, b, x);
   }
-  std::cerr << "Result did not converge" << std::endl;
-  std::cerr << "Error is: " << error << std::endl;
+  std::cout << "LCPOperatorPI: Failed to converge in " << max_iters << " iterations." << std::endl;
+  reportTime(start);
+  std::cerr << "LCPOperatorPI: Result did not converge" << std::endl;
+  std::cerr << "LCPOperatorPI: Error is: " << error << std::endl;
+  std::cerr << "LCPOperatorPI: Failed with size: " << N.cols() << std::endl;
   alpha = x;
 }
 
