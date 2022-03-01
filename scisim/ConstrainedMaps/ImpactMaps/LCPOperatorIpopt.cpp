@@ -98,7 +98,7 @@ void LCPOperatorIpopt::flow( const std::vector<std::unique_ptr<Constraint>>& con
 
   // Create the Ipopt-based QP solver
   assert( Q.rows() == Q.cols() );
-  std::cout << "LCPOperatorPI: Solving LCP of size " << N.cols() << std::endl;
+  std::cout << "LCPOperatorIpopt: Solving LCP of size " << N.cols() << std::endl;
   // Get initial time
   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
   // Use built in termination, for now
