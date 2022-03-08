@@ -6,6 +6,7 @@
 #include "LCPOperatorPI.h"
 #include "scisim/Utilities.h"
 #include <chrono>
+#include <Eigen/LU>
 
 LCPOperatorPI::LCPOperatorPI(const scalar &tol, const unsigned &max_iters)
 : m_tol (tol), max_iters (max_iters)
@@ -97,4 +98,23 @@ std::unique_ptr<ImpactOperator> LCPOperatorPI::clone() const {
 void LCPOperatorPI::serialize(std::ostream &output_stream) const {
   Utilities::serialize(m_tol, output_stream);
 }
+
+bool isInvertible(const SparseMatrixsc &M) {
+  Eigen::FullPivLU<SparseMatrixsc> lu(M);
+  return lu.isInvertible();
+}
+
+bool isMMatrix(const SparseMatrixsc &M)  {
+  assert(M.rows() == M.cols());
+  for (int i = 0; i < M.outerSize(); ++i) {
+    for (SparseMatrixsc::InnerIterator it(M, i); it; ++it) {
+      if (it.row() == it.col() && it.value() <= 0)
+        return false;
+      if (it.row() != it.col() && it.value() > 0)
+        return false;
+    }
+  }
+  return true;
+}
+
 
