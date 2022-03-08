@@ -53,6 +53,24 @@ void reportTime(const std::chrono::time_point<std::chrono::system_clock> &start)
   std::cout << "LCPOperatorPI: Time elapsed: " << elapsed_seconds.count() << "s\n";
 }
 
+bool isInvertible(const SparseMatrixsc &M) {
+  Eigen::FullPivLU<SparseMatrixsc> lu(M);
+  return lu.isInvertible();
+}
+
+bool isMMatrix(const SparseMatrixsc &M)  {
+  assert(M.rows() == M.cols());
+  for (int i = 0; i < M.outerSize(); ++i) {
+    for (SparseMatrixsc::InnerIterator it(M, i); it; ++it) {
+      if (it.row() == it.col() && it.value() <= 0)
+        return false;
+      if (it.row() != it.col() && it.value() > 0)
+        return false;
+    }
+  }
+  return true;
+}
+
 void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, const SparseMatrixsc &M,
                          const SparseMatrixsc &Minv, const VectorXs &q0, const VectorXs &v0, const VectorXs &v0F,
                          const SparseMatrixsc &N, const SparseMatrixsc &Q, const VectorXs &nrel, const VectorXs &CoR,
@@ -84,6 +102,9 @@ void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, c
   std::cerr << "LCPOperatorPI: Result did not converge" << std::endl;
   std::cerr << "LCPOperatorPI: Error is: " << error << std::endl;
   std::cerr << "LCPOperatorPI: Failed with size: " << N.cols() << std::endl;
+  std::cerr << "LCPOperatorPI: Failed with CoR: " << CoR(0) << std::endl;
+  std::cerr << "LCPOperatorPI: Invertible: " << isInvertible(Q) << std::endl;
+  std::cerr << "LCPOperatorPI: M Matrix: " << isMMatrix(Q) << std::endl;
   alpha = x;
 }
 
@@ -99,22 +120,6 @@ void LCPOperatorPI::serialize(std::ostream &output_stream) const {
   Utilities::serialize(m_tol, output_stream);
 }
 
-bool isInvertible(const SparseMatrixsc &M) {
-  Eigen::FullPivLU<SparseMatrixsc> lu(M);
-  return lu.isInvertible();
-}
 
-bool isMMatrix(const SparseMatrixsc &M)  {
-  assert(M.rows() == M.cols());
-  for (int i = 0; i < M.outerSize(); ++i) {
-    for (SparseMatrixsc::InnerIterator it(M, i); it; ++it) {
-      if (it.row() == it.col() && it.value() <= 0)
-        return false;
-      if (it.row() != it.col() && it.value() > 0)
-        return false;
-    }
-  }
-  return true;
-}
 
 
