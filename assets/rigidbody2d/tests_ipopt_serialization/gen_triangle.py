@@ -35,7 +35,7 @@ def create_xml(triangle_size):
       <integrator type="symplectic_euler" dt="0.01"/>
     
       <impact_operator type="gr" CoR="1.0" v_tol="1.0e-9" cache_impulses="0">
-        <solver name="policy_iteration" max_iters="100" tol="1.0e-12"/>
+        <solver name="policy_iteration" max_iters="100" tol="1.0e-6"/>
       </impact_operator>
     
     
