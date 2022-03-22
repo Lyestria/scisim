@@ -32,6 +32,8 @@ public:
 
   virtual void serialize( std::ostream& output_stream ) const = 0;
 
+  static bool isMMatrix(const SparseMatrixsc &M);
+
 protected:
 
   ImpactOperator() = default;

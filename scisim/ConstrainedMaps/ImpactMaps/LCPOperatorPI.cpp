@@ -6,7 +6,6 @@
 #include "LCPOperatorPI.h"
 #include "scisim/Utilities.h"
 #include <chrono>
-#include <Eigen/LU>
 
 LCPOperatorPI::LCPOperatorPI(const scalar &tol, const unsigned &max_iters)
 : m_tol (tol), max_iters (max_iters)
@@ -50,32 +49,16 @@ void updateValue(const SparseMatrixsc &policy, const SparseMatrixsc &Q, const Ve
 void reportTime(const std::chrono::time_point<std::chrono::system_clock> &start)
 {
   std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start;
-  std::cout << "LCPOperatorPI: Time elapsed: " << elapsed_seconds.count() << "s\n";
-}
-
-bool isInvertible(const SparseMatrixsc &M) {
-  Eigen::FullPivLU<SparseMatrixsc> lu(M);
-  return lu.isInvertible();
-}
-
-bool isMMatrix(const SparseMatrixsc &M)  {
-  assert(M.rows() == M.cols());
-  for (int i = 0; i < M.outerSize(); ++i) {
-    for (SparseMatrixsc::InnerIterator it(M, i); it; ++it) {
-      if (it.row() == it.col() && it.value() <= 0)
-        return false;
-      if (it.row() != it.col() && it.value() > 0)
-        return false;
-    }
-  }
-  return true;
+  // std::cout << "LCPOperatorPI: Time elapsed: " << elapsed_seconds.count() << "s\n";
+  std::cout << elapsed_seconds.count() << ",";
 }
 
 void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, const SparseMatrixsc &M,
                          const SparseMatrixsc &Minv, const VectorXs &q0, const VectorXs &v0, const VectorXs &v0F,
                          const SparseMatrixsc &N, const SparseMatrixsc &Q, const VectorXs &nrel, const VectorXs &CoR,
                          VectorXs &alpha) {
-  std::cout << "LCPOperatorPI: Solving LCP of size " << N.cols() << std::endl;
+  // std::cout << "LCPOperatorPI: Solving LCP of size " << N.cols() << std::endl;
+  std::cout << "PI," << N.cols() << "," << isMMatrix(Q) << ",";
   // Get initial time
   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
@@ -89,23 +72,27 @@ void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, c
     error = getPolicy(Q, x, b, policy);
     if (error <= m_tol) {
       alpha = x;
-      std::cout << "LCPOperatorPI: Converged in " << n_iter << " iterations." << std::endl;
+      // std::cout << "LCPOperatorPI: Converged in " << n_iter << " iterations." << std::endl;
+      std::cout << n_iter << ",";
       reportTime(start);
+      std::cout << std::endl;
       return;
     }
     if (n_iter == max_iters)
       break;
     updateValue(policy, Q, b, x);
   }
-  std::cout << "LCPOperatorPI: Failed to converge in " << max_iters << " iterations." << std::endl;
+  // std::cout << "LCPOperatorPI: Failed to converge in " << max_iters << " iterations." << std::endl;
+  std::cout << max_iters << ",";
   reportTime(start);
   std::cerr << "LCPOperatorPI: Result did not converge" << std::endl;
   std::cerr << "LCPOperatorPI: Error is: " << error << std::endl;
   std::cerr << "LCPOperatorPI: Failed with size: " << N.cols() << std::endl;
   std::cerr << "LCPOperatorPI: Failed with CoR: " << CoR(0) << std::endl;
-  std::cerr << "LCPOperatorPI: Invertible: " << isInvertible(Q) << std::endl;
-  std::cerr << "LCPOperatorPI: M Matrix: " << isMMatrix(Q) << std::endl;
+  //std::cerr << "LCPOperatorPI: Invertible: " << isInvertible(Q) << std::endl;
+  //std::cerr << "LCPOperatorPI: M Matrix: " << isMMatrix(Q) << std::endl;
   alpha = x;
+  std::cout << std::endl;
 }
 
 std::string LCPOperatorPI::name() const {
