@@ -12,12 +12,13 @@ class Ball:
     def to_xml(self):
         return f'  <rigid_body x="{self.x} {self.y}" theta="1.570796326794897" v="0.0 0.0" omega="0" rho="8.0" r="{self.r}" geo_idx="0"/>'
 
-def create_xml(num_balls):
-    plane_size = (num_balls / 5) ** 0.5
 
+def create_xml(num_balls):
+    ball_size = 20
+    ball_sep = ball_size / 0.45
     grid_size = math.ceil(num_balls ** 0.5)
-    ball_sep = plane_size / grid_size * 2 * math.sqrt(2)
-    ball_size = 0.45 * ball_sep
+    plane_size = ball_sep * grid_size / 2 / math.sqrt(2)
+
     balls = []
     s2 = math.sqrt(2)
     for i in range(grid_size):
@@ -47,7 +48,7 @@ def create_xml(num_balls):
       <integrator type="symplectic_euler" dt="0.01"/>
     
       <impact_operator type="gr" CoR="1.0" v_tol="1.0e-9" cache_impulses="0">
-        <solver name="ipopt" linear_solvers="ma97 ma57 mumps ma27 ma86" tol="1.0e-12"/>
+        <solver name="policy_iteration" max_iters="100" tol="1.0e-6"/>
       </impact_operator>
     
       <near_earth_gravity f="0.0 -10.0"/>
@@ -61,8 +62,8 @@ def create_xml(num_balls):
     </rigidbody2d_scene>
     """
 
-    os.makedirs('balls_in_box_ipopt', exist_ok=True)
-    with open(os.path.join('balls_in_box_ipopt',f'{num_balls}.xml'), 'w') as f:
+    os.makedirs('big_balls_in_box', exist_ok=True)
+    with open(os.path.join('big_balls_in_box',f'{num_balls}.xml'), 'w') as f:
         f.write(result)
 
 sizes = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 40000, 90000, 160000]

@@ -44,7 +44,7 @@ def create_xml(num_balls):
     
       <camera center="0 0" scale="8.3225" fps="50" render_at_fps="0" locked="0"/>
     
-      <integrator type="symplectic_euler" dt="0.01"/>
+      <integrator type="symplectic_euler" dt="0.001"/>
     
       <impact_operator type="gr" CoR="1.0" v_tol="1.0e-9" cache_impulses="0">
         <solver name="ipopt" linear_solvers="ma97 ma57 mumps ma27 ma86" tol="1.0e-12"/>
@@ -61,8 +61,8 @@ def create_xml(num_balls):
     </rigidbody2d_scene>
     """
 
-    os.makedirs('balls_in_box_ipopt', exist_ok=True)
-    with open(os.path.join('balls_in_box_ipopt',f'{num_balls}.xml'), 'w') as f:
+    os.makedirs('dt_balls_in_box_ipopt', exist_ok=True)
+    with open(os.path.join('dt_balls_in_box_ipopt',f'{num_balls}.xml'), 'w') as f:
         f.write(result)
 
 sizes = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 40000, 90000, 160000]

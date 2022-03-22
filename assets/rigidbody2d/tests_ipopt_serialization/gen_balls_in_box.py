@@ -14,11 +14,12 @@ class Ball:
 
 
 def create_xml(num_balls):
-    plane_size = (num_balls / 5) ** 0.5 * 100
+    plane_size = (num_balls / 5) ** 0.5
 
     grid_size = math.ceil(num_balls ** 0.5)
     ball_sep = plane_size / grid_size * 2 * math.sqrt(2)
     ball_size = 0.45 * ball_sep
+    # print(f'Ball size: {ball_size}')
     balls = []
     s2 = math.sqrt(2)
     for i in range(grid_size):
@@ -66,6 +67,6 @@ def create_xml(num_balls):
     with open(os.path.join('balls_in_box',f'{num_balls}.xml'), 'w') as f:
         f.write(result)
 
-sizes = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000]
+sizes = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 40000, 90000, 160000]
 for size in sizes:
     create_xml(size)

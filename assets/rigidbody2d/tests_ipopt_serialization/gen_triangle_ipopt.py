@@ -47,11 +47,11 @@ def create_xml(triangle_size):
     
     </rigidbody2d_scene>
     """
-    os.makedirs('triangle', exist_ok=True)
-    with open(os.path.join('triangle',f'triangle_{triangle_size}.xml'), 'w') as f:
+    os.makedirs('triangle_ipopt', exist_ok=True)
+    with open(os.path.join('triangle_ipopt', f'{triangle_size}.xml'), 'w') as f:
         f.write(result)
 
 
-sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 125, 150]
+sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 125, 150, 200, 500, 1000]
 for size in sizes:
     create_xml(size)
