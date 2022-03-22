@@ -14,7 +14,7 @@ class Ball:
 
 
 def create_xml(num_balls):
-    plane_size = (num_balls / 5) ** 0.5
+    plane_size = (num_balls / 5) ** 0.5 * 0.2
 
     grid_size = math.ceil(num_balls ** 0.5)
     ball_sep = plane_size / grid_size * 2 * math.sqrt(2)
