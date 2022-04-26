@@ -21,9 +21,9 @@ def random_v():
 
 def create_xml(size):
     random.seed(647863287462)
-    sep = 1.01
+    r = 0.05
+    sep = 1.01 * r * 2
     s = size * sep
-    r = 0.03
 
     balls = []
     s2 = math.sqrt(2)
@@ -70,8 +70,8 @@ def create_xml(size):
     </rigidbody3d_scene>
     """
 
-    os.makedirs('gravity_balls_in_box_3d', exist_ok=True)
-    with open(os.path.join('gravity_balls_in_box_3d', f'{size}.xml'), 'w') as f:
+    os.makedirs('small_balls_in_box_3d', exist_ok=True)
+    with open(os.path.join('small_balls_in_box_3d', f'{size}.xml'), 'w') as f:
         f.write(result)
 
 sizes = [2, 4, 8, 10, 20, 30, 40]
