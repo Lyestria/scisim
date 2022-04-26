@@ -280,7 +280,7 @@ bool GLWidget::openScene( const QString& xml_scene_file_name, const bool& render
     assert( collision_counts.size() == collision_depths.size() ); assert( collision_counts.size() == overlap_volumes.size() );
     if( !collision_counts.empty() )
     {
-      std::cout << "Warning, initial collisions detected (name : count : total_depth : total_volume):" << std::endl;
+      std::cerr << "Warning, initial collisions detected (name : count : total_depth : total_volume):" << std::endl;
     }
     for( const auto& count_pair : collision_counts )
     {
