@@ -32,12 +32,17 @@ public:
 
   virtual void serialize( std::ostream& output_stream ) const = 0;
 
-  static bool isMMatrix(const SparseMatrixsc &M);
+  static std::pair<double, double> MMatrixDeviance(const SparseMatrixsc &M);
 
 protected:
 
   ImpactOperator() = default;
 
+  double DiagonalDominanceDeviance(const SparseMatrixsc &M);
+
+  std::vector<double> getEigenvalues(const SparseMatrixsc &M);
+
+  double getConditionNumber(const SparseMatrixsc &M);
 };
 
 #endif

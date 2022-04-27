@@ -54,7 +54,7 @@ int main( int argc, char** argv )
   // Initialize the callbacks
   PythonScripting::initializeCallbacks();
   #endif
-  std::cout << "Method,Size,M Matrix,Iterations,Time" << std::endl;
+  std::cout << "Method,Size,M Matrix,MM Diag,MM Non-Diag,Diagonal Dominance,Iterations,Time" << std::endl;
 
   QApplication app{ argc, argv };
   const QStringList arguments{ app.arguments() };

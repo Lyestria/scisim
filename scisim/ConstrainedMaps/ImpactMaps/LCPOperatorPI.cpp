@@ -58,7 +58,8 @@ void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, c
                          const SparseMatrixsc &N, const SparseMatrixsc &Q, const VectorXs &nrel, const VectorXs &CoR,
                          VectorXs &alpha) {
   // std::cout << "LCPOperatorPI: Solving LCP of size " << N.cols() << std::endl;
-  std::cout << "PI," << N.cols() << "," << isMMatrix(Q) << ",";
+  auto res = MMatrixDeviance(Q);
+  std::cout << "PI," << N.cols() << "," << std::max(res.first,res.second) << "," << res.first << "," << res.second << "," << DiagonalDominanceDeviance(Q) << ",";
   // Get initial time
   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
@@ -89,8 +90,6 @@ void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, c
   std::cerr << "LCPOperatorPI: Error is: " << error << std::endl;
   std::cerr << "LCPOperatorPI: Failed with size: " << N.cols() << std::endl;
   std::cerr << "LCPOperatorPI: Failed with CoR: " << CoR(0) << std::endl;
-  //std::cerr << "LCPOperatorPI: Invertible: " << isInvertible(Q) << std::endl;
-  //std::cerr << "LCPOperatorPI: M Matrix: " << isMMatrix(Q) << std::endl;
   alpha = x;
   std::cout << std::endl;
 }
