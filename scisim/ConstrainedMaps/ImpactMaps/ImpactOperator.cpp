@@ -38,7 +38,7 @@ double ImpactOperator::DiagonalDominanceDeviance(const SparseMatrixsc &M) {
       else
         sum += std::abs(it.value());
     }
-    double dev = std::max(0.0, diag - sum);
+    double dev = std::max(0.0, sum - diag);
     max_deviance = std::max(max_deviance, dev);
   }
   return max_deviance;

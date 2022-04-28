@@ -307,7 +307,7 @@ bool GLWidget::openScene( const QString& xml_scene_file_name, const bool& render
       {
         volume_string = "volume_computation_not_supported";
       }
-      std::cout << "   " << constraint_name << " : " << constraint_count << " : " << depth_string << " : " << volume_string << std::endl;
+      std::cerr << "   " << constraint_name << " : " << constraint_count << " : " << depth_string << " : " << volume_string << std::endl;
     }
   }
 

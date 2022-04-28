@@ -38,11 +38,11 @@ protected:
 
   ImpactOperator() = default;
 
-  double DiagonalDominanceDeviance(const SparseMatrixsc &M);
+  static double DiagonalDominanceDeviance(const SparseMatrixsc &M);
 
-  std::vector<double> getEigenvalues(const SparseMatrixsc &M);
+  __attribute__((unused)) static std::vector<double> getEigenvalues(const SparseMatrixsc &M);
 
-  double getConditionNumber(const SparseMatrixsc &M);
+  static double getConditionNumber(const SparseMatrixsc &M);
 };
 
 #endif
