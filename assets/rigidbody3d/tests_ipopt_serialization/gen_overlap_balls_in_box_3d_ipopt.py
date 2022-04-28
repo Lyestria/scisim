@@ -70,8 +70,8 @@ def create_xml(size):
     </rigidbody3d_scene>
     """
 
-    os.makedirs('overlap_balls_in_box_3d', exist_ok=True)
-    with open(os.path.join('overlap_balls_in_box_3d', f'{size}.xml'), 'w') as f:
+    os.makedirs('overlap_balls_in_box_3d_ipopt', exist_ok=True)
+    with open(os.path.join('overlap_balls_in_box_3d_ipopt', f'{size}.xml'), 'w') as f:
         f.write(result)
 
 sizes = [2, 3, 4, 8, 10, 20, 30, 40]
