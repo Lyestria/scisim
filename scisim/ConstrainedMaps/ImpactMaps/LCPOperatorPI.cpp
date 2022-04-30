@@ -7,17 +7,31 @@
 #include "scisim/Utilities.h"
 #include <chrono>
 
+const std::string header = "Method,Size,M Matrix,MM Diag,MM Non-Diag,DD Bad Rows,DD Max Dev,IPOPT,Iterations,PI";
+bool first_time = true;
+
 LCPOperatorPI::LCPOperatorPI(const scalar &tol, const unsigned &max_iters)
-: m_tol (tol), max_iters (max_iters)
+: m_tol (tol)
+, max_iters (max_iters)
+, alt_solver({"ma97", "ma57", "mumps", "ma27", "ma86"}, tol)
 {
   assert(m_tol >= 0);
+  if(first_time) {
+    std::cout << header << std::endl;
+    first_time = false;
+  }
 }
 
 LCPOperatorPI::LCPOperatorPI(std::istream &input_stream)
 : m_tol (Utilities::deserialize<scalar>( input_stream ))
 , max_iters (Utilities::deserialize<unsigned>(input_stream))
+, alt_solver({"ma97", "ma57", "mumps", "ma27", "ma86"}, m_tol)
 {
   assert(m_tol >= 0);
+  if(first_time) {
+    std::cout << header << std::endl;
+    first_time = false;
+  }
 }
 
 // Returns the error of our solution
@@ -58,8 +72,10 @@ void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, c
                          const SparseMatrixsc &N, const SparseMatrixsc &Q, const VectorXs &nrel, const VectorXs &CoR,
                          VectorXs &alpha) {
   // std::cout << "LCPOperatorPI: Solving LCP of size " << N.cols() << std::endl;
-  auto res = MMatrixDeviance(Q);
-  std::cout << "PI," << N.cols() << "," << std::max(res.first,res.second) << "," << res.first << "," << res.second << "," << DiagonalDominanceDeviance(Q) << ",";
+  auto mm = MMatrixDeviance(Q);
+  auto dd = DiagonalDominanceDeviance(Q);
+  std::cout << "Both," << N.cols() << "," << std::max(mm.first,mm.second) << "," << mm.first << "," << mm.second << "," << dd.first << "," << dd.second << ",";
+  alt_solver.flow(cons, M, Minv, q0, v0, v0F, N, Q, nrel, CoR, alpha);
   // Get initial time
   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
@@ -72,7 +88,7 @@ void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, c
   {
     error = getPolicy(Q, x, b, policy);
     if (error <= m_tol) {
-      alpha = x;
+      alpha = x; // To use IPOPT version for real output, comment all lines assigning alpha
       // std::cout << "LCPOperatorPI: Converged in " << n_iter << " iterations." << std::endl;
       std::cout << n_iter << ",";
       reportTime(start);

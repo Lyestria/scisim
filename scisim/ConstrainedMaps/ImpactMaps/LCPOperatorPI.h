@@ -6,6 +6,7 @@
 #define SCISIM_LCP_OPERATOR_PI_H
 
 #include "ImpactOperator.h"
+#include "LCPOperatorIpopt.h"
 
 class LCPOperatorPI final : public ImpactOperator {
 
@@ -27,6 +28,7 @@ public:
 private:
     const scalar m_tol;
     const unsigned max_iters;
+    LCPOperatorIpopt alt_solver;
 };
 
 

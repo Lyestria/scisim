@@ -27,9 +27,10 @@ std::pair<double, double> ImpactOperator::MMatrixDeviance(const SparseMatrixsc &
 }
 
 // Returns the maximum deviation from a diagonal dominant matrix on any of the rows.
-double ImpactOperator::DiagonalDominanceDeviance(const SparseMatrixsc &M) {
+std::pair<int,double> ImpactOperator::DiagonalDominanceDeviance(const SparseMatrixsc &M) {
   assert(M.rows() == M.cols());
   double max_deviance = 0.0;
+  int num_bad = 0;
   for (int i = 0; i < M.outerSize(); ++i) {
     double diag = 0.0, sum = 0.0;
     for (SparseMatrixsc::InnerIterator it(M, i); it; ++it) {
@@ -39,9 +40,12 @@ double ImpactOperator::DiagonalDominanceDeviance(const SparseMatrixsc &M) {
         sum += std::abs(it.value());
     }
     double dev = std::max(0.0, sum - diag);
+    if (dev > 0) {
+      ++num_bad;
+    }
     max_deviance = std::max(max_deviance, dev);
   }
-  return max_deviance;
+  return {num_bad, max_deviance};
 }
 
 std::vector<double> ImpactOperator::getEigenvalues(const SparseMatrixsc &M) {

@@ -38,7 +38,7 @@ protected:
 
   ImpactOperator() = default;
 
-  static double DiagonalDominanceDeviance(const SparseMatrixsc &M);
+  static std::pair<int, double> DiagonalDominanceDeviance(const SparseMatrixsc &M);
 
   __attribute__((unused)) static std::vector<double> getEigenvalues(const SparseMatrixsc &M);
 
