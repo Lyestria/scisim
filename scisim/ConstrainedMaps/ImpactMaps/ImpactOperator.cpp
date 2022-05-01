@@ -59,9 +59,7 @@ std::vector<double> ImpactOperator::getEigenvalues(const SparseMatrixsc &M) {
 double ImpactOperator::getConditionNumber(const SparseMatrixsc &M) {
   assert(M.rows() == M.cols());
   auto dense = M.toDense();
-  auto eigenvalues = dense.eigenvalues().real();
-  double max_eigenvalue = *std::max_element(eigenvalues.data(), eigenvalues.data() + eigenvalues.size());
-  double min_eigenvalue = *std::min_element(eigenvalues.data(), eigenvalues.data() + eigenvalues.size());
-  return max_eigenvalue / min_eigenvalue;
-
+  Eigen::JacobiSVD<MatrixXs> svd(dense);
+  return svd.singularValues()(0)
+                / svd.singularValues()(svd.singularValues().size()-1);
 }
