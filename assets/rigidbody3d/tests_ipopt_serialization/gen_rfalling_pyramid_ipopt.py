@@ -35,7 +35,7 @@ def create_xml(size):
     result = \
         f"""
         <rigidbody3d_scene>
-  <camera_perspective theta="-1.5707" phi="1.5707" rho="7.12621" lookat="0 0 0" up="0 1 0" fps="50" render_at_fps="0" locked="0"/>
+  <camera_perspective theta="-1.5707" phi="1.5707" rho="{5+0.2*size}" lookat="0 0 0" up="0 1 0" fps="50" render_at_fps="0" locked="0"/>
     <near_earth_gravity f="-5 0 0"/>
   <integrator type="split_ham" dt="0.01"/>
   
