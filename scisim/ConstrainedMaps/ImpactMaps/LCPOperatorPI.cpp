@@ -7,7 +7,7 @@
 #include "scisim/Utilities.h"
 #include <chrono>
 
-const std::string header = "Method,Size,M Matrix,MM Diag,MM Non-Diag,DD Bad Rows,DD Max Dev,IPOPT,Iterations,PI";
+const std::string header = "Method,Size,M Matrix,MM Diag,MM Non-Diag,DD Bad Rows,DD Max Dev,Min Eigen,Max Eigen,Condition Number,IPOPT,Iterations,PI";
 bool first_time = true;
 
 LCPOperatorPI::LCPOperatorPI(const scalar &tol, const unsigned &max_iters)
@@ -74,7 +74,16 @@ void LCPOperatorPI::flow(const std::vector<std::unique_ptr<Constraint>> &cons, c
   // std::cout << "LCPOperatorPI: Solving LCP of size " << N.cols() << std::endl;
   auto mm = MMatrixDeviance(Q);
   auto dd = DiagonalDominanceDeviance(Q);
+  auto eigenvalues = getEigenvalues(Q);
+  if(eigenvalues.empty()) {
+    eigenvalues.push_back(INFINITY);
+  }
+  sort(eigenvalues.begin(), eigenvalues.end(), [](const scalar &a, const scalar &b) {
+    return std::abs(a) < std::abs(b);
+  });
+
   std::cout << "Both," << N.cols() << "," << std::max(mm.first,mm.second) << "," << mm.first << "," << mm.second << "," << dd.first << "," << dd.second << ",";
+  std::cout << eigenvalues.front() << "," << eigenvalues.back() << "," << getConditionNumber(Q) << ",";
   alt_solver.flow(cons, M, Minv, q0, v0, v0F, N, Q, nrel, CoR, alpha);
   // Get initial time
   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();

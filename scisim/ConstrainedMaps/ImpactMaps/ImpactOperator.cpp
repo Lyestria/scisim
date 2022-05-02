@@ -50,6 +50,8 @@ std::pair<int,double> ImpactOperator::DiagonalDominanceDeviance(const SparseMatr
 
 std::vector<double> ImpactOperator::getEigenvalues(const SparseMatrixsc &M) {
   assert(M.rows() == M.cols());
+  return {};
+  // Eigenvalue code sometimes generates seg faults
   auto dense = M.toDense();
   auto eigenvalues = dense.eigenvalues().real();
   std::vector<double> eigenvalues_vec(eigenvalues.data(), eigenvalues.data() + eigenvalues.size());
@@ -60,6 +62,7 @@ double ImpactOperator::getConditionNumber(const SparseMatrixsc &M) {
   assert(M.rows() == M.cols());
   auto dense = M.toDense();
   Eigen::JacobiSVD<MatrixXs> svd(dense);
+  if(svd.singularValues()(svd.singularValues().size()-1) == 0) return SCALAR_INFINITY;
   return svd.singularValues()(0)
                 / svd.singularValues()(svd.singularValues().size()-1);
 }
