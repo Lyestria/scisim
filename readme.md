@@ -7,6 +7,8 @@ Welcome to **SCISim** (pronounced skiz-em), the Structured Contact Impact Simula
 
 To resolve collisions between volumetric objects, SCISim employs precomputed implicit distance fields. We provide a tool to compute these distance fields from a triangle mesh in a [separate repository](https://github.com/breannansmith/implicittoolkit).
 
+See my work report here [report.pdf](report.pdf) -- Kevin Wan
+
 Required Dependencies
 ---------------------
 
